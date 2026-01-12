@@ -19,3 +19,8 @@ spec:
           image: docker.io/deepmhabdi/deep-kubernetes:latest
           ports:
             - containerPort: 9000
+          env: 
+            - name: tree
+              value: good
+            - name: PORT
+              value: "9000"
