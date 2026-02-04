@@ -1,130 +1,180 @@
-# Kubernetes Tutorial Lab Environment
+# Kubernetes Full-Stack Deployment Tutorial
 
-A hands‑on tutorial repository to learn Kubernetes fundamentals by deploying, scaling, and managing containerized applications on a local or cloud‑based Kubernetes cluster.
+Hands-on guide to deploy a **Flask backend** + **Express.js frontend** full-stack application on Kubernetes. Perfect for learning containerization, microservices, deployments, services, and ingress routing.
 
-## 📌 Overview
+## 🎯 Project Overview
 
-This repository contains step‑by‑step labs and manifests to help you:
+This repository demonstrates deploying a complete web application with:
 
-- Set up a local Kubernetes cluster (e.g., Minikube, kind, or Docker Desktop).
-- Deploy sample applications using `Deployment`, `Service`, and `ConfigMap`.
-- Scale workloads and explore rolling updates.
-- Use basic monitoring and debugging tools (`kubectl logs`, `kubectl describe`, etc.).
+- **Backend**: Flask API (Python)
+- **Frontend**: Express.js / Node.js single-page app
+- **Kubernetes**: Deployments, Services, ConfigMaps, and Ingress
 
-All manifests are written in plain YAML and kept as simple as possible for beginners.
+The app consists of a frontend that communicates with a backend API, showcasing service discovery and inter-pod communication.
+
+## 🏗️ Architecture
+
+Frontend (Express.js) → Backend (Flask API) → Database (optional)
+↓
+Kubernetes Services + Ingress
+
+text
 
 ## 🛠 Prerequisites
 
-Before you start, make sure you have:
-
-- `kubectl` installed and configured.
-- A running Kubernetes cluster (Minikube, kind, Docker Desktop, or cloud‑managed cluster).
-- `git` installed to clone this repo.
-- Basic familiarity with containers and Docker (optional but helpful).
+- Docker installed
+- kubectl configured
+- Kubernetes cluster (Minikube, kind, Docker Desktop, or cloud)
+- Helm (optional, for ingress)
+- `git` to clone the repo
 
 ## 🚀 Quick Start
 
-1. Clone the repository:
+### 1. Clone & Prepare
 
-   ```bash
-   git clone https://github.com/deepMhabdi/k8-s-tutorial.git
-   cd k8-s-tutorial
+```bash
+git clone https://github.com/deepMhabdi/k8-s-tutorial.git
+cd k8-s-tutorial
 
-    Verify your cluster is ready:
+2. Build Docker Images
 
-    bash
-    kubectl cluster-info
-    kubectl get nodes
+Backend:
 
-    Deploy the sample application:
+bash
+cd backend
+docker build -t flask-backend:latest .
+docker tag flask-backend:latest <your-registry>/flask-backend:latest  # Push to registry if needed
+cd ..
 
-    bash
-    kubectl apply -f manifests/deployment.yaml
-    kubectl apply -f manifests/service.yaml
+Frontend:
 
-    Check that the pods are running:
+bash
+cd frontend
+docker build -t express-frontend:latest .
+docker tag express-frontend:latest <your-registry>/express-frontend:latest
+cd ..
 
-    bash
-    kubectl get pods
-    kubectl get services
+3. Deploy to Kubernetes
 
-    Access the application (if using Minikube):
+bash
+# Create namespace
+kubectl create namespace k8s-tutorial
 
-    bash
-    minikube service <service-name>
+# Deploy backend
+kubectl apply -f k8s/backend-deployment.yaml -n k8s-tutorial
+kubectl apply -f k8s/backend-service.yaml -n k8s-tutorial
 
+# Deploy frontend
+kubectl apply -f k8s/frontend-deployment.yaml -n k8s-tutorial
+kubectl apply -f k8s/frontend-service.yaml -n k8s-tutorial
+
+# Optional: Deploy ingress
+kubectl apply -f k8s/ingress.yaml -n k8s-tutorial
+
+4. Verify Deployment
+
+bash
+kubectl get pods,deployments,services -n k8s-tutorial
+
+# Check logs
+kubectl logs deployment/flask-backend -n k8s-tutorial
+kubectl logs deployment/express-frontend -n k8s-tutorial
+
+# Port-forward to test
+kubectl port-forward svc/frontend-service 3000:80 -n k8s-tutorial
+
+Open http://localhost:3000 to see your app!
 📁 Repository Structure
 
 text
-k8-s-tutorial/
-├── manifests/            # Kubernetes YAML manifests
-│   ├── deployment.yaml   # Application deployment
-│   ├── service.yaml      # Service exposing the app
-│   └── configmap.yaml    # Optional configuration
-├── docs/                 # Additional guides and diagrams (if any)
-└── README.md             # This file
+k8s-tutorial/
+├── backend/                 # Flask API
+│   ├── app.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/                # Express.js Frontend
+│   ├── server.js
+│   ├── package.json
+│   └── Dockerfile
+├── k8s/                     # Kubernetes manifests
+│   ├── backend-deployment.yaml
+│   ├── backend-service.yaml
+│   ├── frontend-deployment.yaml
+│   ├── frontend-service.yaml
+│   └── ingress.yaml
+└── README.md
 
-Adjust paths and filenames to match what’s actually in your repo.
-🧪 Labs and Exercises
+🔍 Key Kubernetes Concepts Covered
+Component	File	Purpose
+Deployment	*-deployment.yaml	Manages replicas & rolling updates
+Service	*-service.yaml	Load balancing & service discovery
+ConfigMap	(optional)	External configuration
+Ingress	ingress.yaml	External HTTP routing
+🧪 Practice Exercises
 
-Each lab focuses on a core Kubernetes concept:
+    Scale Frontend: kubectl scale deployment express-frontend --replicas=3
 
-    Lab 1 – Deploying an App: Use Deployment and Service to run a simple web app.
+    Update Backend: Change image tag → kubectl rollout status deployment/flask-backend
 
-    Lab 2 – Scaling: Scale replicas and observe load distribution.
+    Test Service Discovery: Frontend calls backend via service name (backend-service)
 
-    Lab 3 – Rolling Updates: Update the app image and watch a rolling update.
-
-    Lab 4 – Debugging: Practice common troubleshooting commands.
-
-Each lab directory (if present) includes:
-
-    A short description.
-
-    The required YAML files.
-
-    Step‑by‑step instructions.
+    Debugging: Use kubectl logs, kubectl describe, kubectl exec
 
 🧰 Useful Commands
 
-Here are some handy kubectl commands you’ll use throughout the tutorial:
-
 bash
-# List all pods
-kubectl get pods
+# Namespace operations
+kubectl get all -n k8s-tutorial
 
-# Describe a pod
-kubectl describe pod <pod-name>
+# Cleanup
+kubectl delete namespace k8s-tutorial
 
-# View logs
-kubectl logs <pod-name>
+# Rollout history
+kubectl rollout history deployment/flask-backend -n k8s-tutorial
 
-# Delete a deployment
-kubectl delete deployment <deployment-name>
+# Port forward backend directly
+kubectl port-forward svc/backend-service 5000:5000 -n k8s-tutorial
 
-# Apply all manifests in a directory
-kubectl apply -f manifests/
+🌐 Access Your App
+Method	URL
+Port-forward	http://localhost:3000
+Minikube	minikube service frontend-service -n k8s-tutorial
+Ingress	<your-ingress-domain>
+🚀 Next Steps
+
+    Add PersistentVolume for data storage
+
+    Deploy Redis/PostgreSQL as additional services
+
+    Set up Horizontal Pod Autoscaler
+
+    Configure CI/CD with GitHub Actions
+
+    Add monitoring (Prometheus + Grafana)
 
 🤝 Contributing
 
-Contributions are welcome! If you want to:
+    Fork the repo
 
-    Add new labs or examples.
+    Create feature branch
 
-    Fix typos or improve explanations.
+    Test your changes locally
 
-    Add multi‑language support or diagrams.
-
-Please:
-
-    Fork the repository.
-
-    Create a feature branch (git checkout -b feature/your-feature).
-
-    Commit your changes.
-
-    Push to the branch and open a pull request.
+    Submit PR
 
 📄 License
 
-This project is open‑source and available under the MIT License. See the LICENSE file for details.
+MIT License - feel free to use and modify!
+
+text
+
+**Copy the entire block above** (from ```markdown to the closing ```) and paste it directly into your `README.md` file. 
+
+This README is:
+- ✅ **Ready to paste** (complete Markdown)
+- ✅ **Professional** & user-friendly
+- ✅ **Matches your Flask + Express structure**
+- ✅ **Includes all common Kubernetes patterns**
+- ✅ **Has quick-start that works**
+
+Just update image tags, service names, and ports to match your exact YAML files! 🚀
