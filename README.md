@@ -1,263 +1,130 @@
-Kubernetes (K8s) Tutorial 🚀
-A comprehensive hands-on tutorial for learning Kubernetes from basics to advanced concepts. This repository contains practical examples, configurations, and applications to help you master container orchestration with Kubernetes.
-📋 Table of Contents
+# Kubernetes Tutorial Lab Environment
 
-About
-Prerequisites
-Getting Started
-Project Structure
-Topics Covered
-Installation
-Usage
-Examples
-Contributing
-Resources
-License
+A hands‑on tutorial repository to learn Kubernetes fundamentals by deploying, scaling, and managing containerized applications on a local or cloud‑based Kubernetes cluster.
 
-🎯 About
-This tutorial provides a practical approach to learning Kubernetes by walking through real-world examples and use cases. Whether you're a beginner starting with containers or an experienced developer looking to understand K8s orchestration, this guide has something for everyone.
-✅ Prerequisites
-Before starting this tutorial, you should have:
+## 📌 Overview
 
-Basic understanding of Docker and containerization
-Familiarity with command-line interface (CLI)
-Basic knowledge of YAML syntax
-Understanding of basic networking concepts
+This repository contains step‑by‑step labs and manifests to help you:
 
-Required Tools
+- Set up a local Kubernetes cluster (e.g., Minikube, kind, or Docker Desktop).
+- Deploy sample applications using `Deployment`, `Service`, and `ConfigMap`.
+- Scale workloads and explore rolling updates.
+- Use basic monitoring and debugging tools (`kubectl logs`, `kubectl describe`, etc.).
 
-Docker: Container runtime (version 20.0 or higher)
-kubectl: Kubernetes command-line tool
-minikube or kind: Local Kubernetes cluster (for development)
-Python: Version 3.8+ (for running examples)
-Git: For cloning the repository
+All manifests are written in plain YAML and kept as simple as possible for beginners.
 
-🚀 Getting Started
-1. Clone the Repository
-bashgit clone https://github.com/deepMhabdi/k8-s-tutorial.git
-cd k8-s-tutorial
-2. Set Up Local Kubernetes Cluster
-Using Minikube
-bash# Start minikube
-minikube start --driver=docker
+## 🛠 Prerequisites
 
-# Verify cluster is running
-kubectl cluster-info
-kubectl get nodes
-Using kind (Kubernetes in Docker)
-bash# Create a cluster
-kind create cluster --name k8s-tutorial
+Before you start, make sure you have:
 
-# Verify cluster
-kubectl cluster-info --context kind-k8s-tutorial
-3. Verify Installation
-bash# Check kubectl version
-kubectl version --client
+- `kubectl` installed and configured.
+- A running Kubernetes cluster (Minikube, kind, Docker Desktop, or cloud‑managed cluster).
+- `git` installed to clone this repo.
+- Basic familiarity with containers and Docker (optional but helpful).
 
-# Check cluster status
-kubectl get all --all-namespaces
-📁 Project Structure
+## 🚀 Quick Start
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/deepMhabdi/k8-s-tutorial.git
+   cd k8-s-tutorial
+
+    Verify your cluster is ready:
+
+    bash
+    kubectl cluster-info
+    kubectl get nodes
+
+    Deploy the sample application:
+
+    bash
+    kubectl apply -f manifests/deployment.yaml
+    kubectl apply -f manifests/service.yaml
+
+    Check that the pods are running:
+
+    bash
+    kubectl get pods
+    kubectl get services
+
+    Access the application (if using Minikube):
+
+    bash
+    minikube service <service-name>
+
+📁 Repository Structure
+
+text
 k8-s-tutorial/
-├── deep/                    # Main tutorial content
-│   ├── basics/             # Basic Kubernetes concepts
-│   ├── deployments/        # Deployment configurations
-│   ├── services/           # Service examples
-│   ├── networking/         # Networking configurations
-│   ├── storage/            # Persistent storage examples
-│   └── advanced/           # Advanced topics
-├── examples/               # Practical examples
-│   ├── python-app/        # Sample Python application
-│   └── web-app/           # Sample web application
-├── configs/               # Kubernetes configuration files
-├── scripts/               # Helper scripts
+├── manifests/            # Kubernetes YAML manifests
+│   ├── deployment.yaml   # Application deployment
+│   ├── service.yaml      # Service exposing the app
+│   └── configmap.yaml    # Optional configuration
+├── docs/                 # Additional guides and diagrams (if any)
 └── README.md             # This file
-📚 Topics Covered
-Fundamentals
 
-🐳 Kubernetes Architecture
-📦 Pods and Containers
-🏷️ Labels and Selectors
-🔧 ConfigMaps and Secrets
-📝 Namespaces
+Adjust paths and filenames to match what’s actually in your repo.
+🧪 Labs and Exercises
 
-Workloads
+Each lab focuses on a core Kubernetes concept:
 
-🚀 Deployments
-📊 ReplicaSets
-🔄 StatefulSets
-⚡ DaemonSets
-📋 Jobs and CronJobs
+    Lab 1 – Deploying an App: Use Deployment and Service to run a simple web app.
 
-Networking
+    Lab 2 – Scaling: Scale replicas and observe load distribution.
 
-🌐 Services (ClusterIP, NodePort, LoadBalancer)
-🔌 Ingress Controllers
-🔐 Network Policies
-🌍 DNS in Kubernetes
+    Lab 3 – Rolling Updates: Update the app image and watch a rolling update.
 
-Storage
+    Lab 4 – Debugging: Practice common troubleshooting commands.
 
-💾 Volumes
-📀 Persistent Volumes (PV)
-📋 Persistent Volume Claims (PVC)
-🗄️ Storage Classes
+Each lab directory (if present) includes:
 
-Advanced Topics
+    A short description.
 
-📈 Horizontal Pod Autoscaling
-🔍 Monitoring and Logging
-🔒 RBAC (Role-Based Access Control)
-🛡️ Security Best Practices
-🎯 Resource Quotas and Limits
+    The required YAML files.
 
-💻 Installation
-Install kubectl
-macOS:
-bashbrew install kubectl
-Linux:
-bashcurl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-Windows:
-powershellchoco install kubernetes-cli
-Install Minikube
-macOS:
-bashbrew install minikube
-Linux:
-bashcurl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
-Windows:
-powershellchoco install minikube
-🎮 Usage
-Running Your First Pod
-bash# Create a simple nginx pod
-kubectl run nginx-pod --image=nginx:latest
+    Step‑by‑step instructions.
 
-# Check pod status
+🧰 Useful Commands
+
+Here are some handy kubectl commands you’ll use throughout the tutorial:
+
+bash
+# List all pods
 kubectl get pods
 
-# Get detailed information
-kubectl describe pod nginx-pod
+# Describe a pod
+kubectl describe pod <pod-name>
 
-# Delete the pod
-kubectl delete pod nginx-pod
-Deploying from YAML Files
-bash# Apply a configuration
-kubectl apply -f configs/deployment.yaml
-
-# View deployments
-kubectl get deployments
-
-# View services
-kubectl get services
-
-# Delete resources
-kubectl delete -f configs/deployment.yaml
-Working with Examples
-bash# Navigate to example directory
-cd examples/python-app
-
-# Build Docker image
-docker build -t python-k8s-app:latest .
-
-# Apply Kubernetes configurations
-kubectl apply -f k8s/
-
-# Check deployment status
-kubectl get all
-📖 Examples
-Example 1: Simple Web Application
-Deploy a basic web application with a service:
-yaml# See examples/web-app/deployment.yaml for full example
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: web-app
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: web
-  template:
-    metadata:
-      labels:
-        app: web
-    spec:
-      containers:
-      - name: web
-        image: nginx:latest
-        ports:
-        - containerPort: 80
-Example 2: Python Application with Database
-Deploy a Python application connected to a database:
-bashcd examples/python-app
-kubectl apply -f k8s/
-kubectl get pods -w
-Common Commands Cheat Sheet
-bash# Get cluster information
-kubectl cluster-info
-
-# List all resources
-kubectl get all
-
-# List pods
-kubectl get pods
-kubectl get pods -o wide
-
-# Logs
+# View logs
 kubectl logs <pod-name>
-kubectl logs -f <pod-name>  # Follow logs
 
-# Execute commands in pod
-kubectl exec -it <pod-name> -- /bin/bash
-
-# Port forwarding
-kubectl port-forward <pod-name> 8080:80
-
-# Scale deployment
-kubectl scale deployment <name> --replicas=5
-
-# Update deployment
-kubectl set image deployment/<name> container=image:tag
-
-# Rollout status
-kubectl rollout status deployment/<name>
-kubectl rollout history deployment/<name>
-
-# Delete resources
-kubectl delete pod <pod-name>
+# Delete a deployment
 kubectl delete deployment <deployment-name>
+
+# Apply all manifests in a directory
+kubectl apply -f manifests/
+
 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-How to Contribute
 
-Fork the repository
-Create your feature branch (git checkout -b feature/AmazingFeature)
-Commit your changes (git commit -m 'Add some AmazingFeature')
-Push to the branch (git push origin feature/AmazingFeature)
-Open a Pull Request
+Contributions are welcome! If you want to:
 
-📚 Resources
-Official Documentation
+    Add new labs or examples.
 
-Kubernetes Official Documentation
-kubectl Cheat Sheet
-Kubernetes API Reference
+    Fix typos or improve explanations.
 
-Learning Resources
+    Add multi‑language support or diagrams.
 
-Kubernetes Basics Tutorial
-Play with Kubernetes
-Kubernetes Patterns Book
+Please:
 
-Community
+    Fork the repository.
 
-Kubernetes Slack
-Kubernetes GitHub
-CNCF Community
+    Create a feature branch (git checkout -b feature/your-feature).
 
-📝 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-👨‍💻 Author
-Deep Mhabdi
+    Commit your changes.
 
-GitHub: @deepMhabdi
+    Push to the branch and open a pull request.
+
+📄 License
+
+This project is open‑source and available under the MIT License. See the LICENSE file for details.
